@@ -7,7 +7,7 @@ const Navbar = () => {
             <p className='font-semibold text-xl text-white'>Kelontong Store</p>
             <div>
                 <div className='flex gap-1 items-center rounded-md bg-[#004580] px-3 py-2 cursor-pointer'>
-                    <Image src="product.svg" width={24} height={24} alt="product" />
+                    <Image src="/product.svg" width={24} height={24} alt="product" />
                     <span className='text-sm font-semibold text-white'>Produk</span>
                 </div>
             </div>

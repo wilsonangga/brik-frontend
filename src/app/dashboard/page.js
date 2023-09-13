@@ -5,7 +5,7 @@ import ProductList from '../component/ProductList'
 
 const Dashboard = () => {
     return (
-        <div className='flex min-h-screen'>
+        <div className='flex min-h-screen bg-[#F8F9FC]'>
             <Navbar />
             <div className='w-full'>
                 <Header />
