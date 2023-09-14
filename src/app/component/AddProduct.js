@@ -3,10 +3,12 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import category from '@/data/category'
+import Swal from 'sweetalert2'
 
 const AddProduct = () => {
     const router = useRouter()
     const [data, setData] = useState({
+        image: "",
         name: "",
         sku: "",
         price: "",
@@ -18,6 +20,7 @@ const AddProduct = () => {
         description: ""
     })
     const [error, setError] = useState({
+        image: false,
         name: false,
         sku: false,
         price: false,
@@ -28,10 +31,29 @@ const AddProduct = () => {
         height: false,
         description: false
     })
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                setSelectedImage(e.target.result);
+            };
+
+            reader.readAsDataURL(file);
+        } else {
+            setSelectedImage(null);
+            setData({ ...data, image: "" })
+        }
+    };
 
     const checkEmpty = () => {
         if (!data.name || !data.sku || !data.price || !data.category || !data.weight || !data.length || !data.width || !data.height || !data.description) {
             const updatedError = { ...error }
+            updatedError.image = !data.image;
             updatedError.name = !data.name;
             updatedError.sku = !data.sku;
             updatedError.price = !data.price;
@@ -66,8 +88,24 @@ const AddProduct = () => {
             setData({ ...data, width: value })
         } else if (prop === "height") {
             setData({ ...data, height: value })
+        } else if (prop === "image") {
+            setData({ ...data, image: value })
         }
     };
+
+    const handleSubmit = () => {
+        if (!checkEmpty()) {
+            Swal.fire({
+                icon: "success",
+                title: "Product Added",
+                text: "Product has been added"
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    router.push("/dashboard")
+                }
+            })
+        }
+    }
 
     return (
         <div className='my-10 px-8'>
@@ -76,6 +114,18 @@ const AddProduct = () => {
                 <h1 className='text-2xl font-semibold'>Tambah Produk</h1>
             </div>
             <div className='flex flex-col gap-6 mt-7'>
+                <div className='flex flex-col w-72 gap-2'>
+                    <label htmlFor="name" className='font-medium text-xs'>Upload Photo</label>
+                    <input type="file" accept="image/*" className={`bg-white rounded-lg px-4 py-3 outline-none text-sm ${error.image ? 'border border-red-500' : 'border-none'}`} placeholder='Input product name' value={data.image} onChange={(e)=>{handleImageChange(e);
+            setData({ ...data, image: e.target.value })}} />
+                    {selectedImage && (
+                        <div>
+                            <Image src={selectedImage} alt="Preview" width={200} height={200} />
+                        </div>
+                    )}
+                    <span className={`text-red-600 text-xs font-medium ${error.image ? 'block' : 'hidden'}`}>Photo is required</span>
+                </div>
+
                 <div className='flex flex-col w-72 gap-2'>
                     <label htmlFor="name" className='font-medium text-xs'>Product Name</label>
                     <input type="text" className={`bg-white rounded-lg px-4 py-3 outline-none text-sm ${error.name ? 'border border-red-500' : 'border-none'}`} placeholder='Input product name' value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} />
@@ -105,11 +155,18 @@ const AddProduct = () => {
 
                 <div className='flex flex-col w-72 gap-2'>
                     <label htmlFor="name" className='font-medium text-xs'>Category</label>
-                    <select className={`bg-white rounded-lg px-4 py-3 outline-none text-sm ${error.category ? 'border border-red-500' : 'border-none'}`}>
-                        <option value={data.category} onChange={(e) => setData({ ...data, category: e.target.value })}>Select Category</option>
-                        {category.map((item, index) => {
-                            return <option value={item.value} key={index}>{item.name}</option>
-                        })}
+                    <select
+                        className={`bg-white rounded-lg px-4 py-3 outline-none text-sm ${error.category ? 'border border-red-500' : 'border-none'
+                            }`}
+                        onChange={(e) => setData({ ...data, category: e.target.value })}
+                        value={data.category}
+                    >
+                        <option value="">Select Category</option> {/* Placeholder option */}
+                        {category.map((item, index) => (
+                            <option value={item.value} key={index}>
+                                {item.name}
+                            </option>
+                        ))}
                     </select>
                     <span className={`text-red-600 text-xs font-medium ${error.category ? 'block' : 'hidden'}`}>Category is required</span>
                 </div>
@@ -147,7 +204,7 @@ const AddProduct = () => {
                     <span className={`text-red-600 text-xs font-medium ${error.description ? 'block' : 'hidden'}`}>Description is required</span>
                 </div>
 
-                <button className='bg-[#008CFF] w-72 py-3 text-white font-semibold rounded-lg text-sm' onClick={() => checkEmpty()}>Simpan</button>
+                <button className='bg-[#008CFF] w-72 py-3 text-white font-semibold rounded-lg text-sm' onClick={() => handleSubmit()}>Simpan</button>
             </div>
         </div>
     )
