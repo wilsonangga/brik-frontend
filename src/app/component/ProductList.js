@@ -90,9 +90,9 @@ const ProductList = () => {
             <div className='flex justify-between mt-6'>
                 <span className='text-sm text-[#909EAB]'>Menampilkan halaman {page + 1} dari {search === "" ? Math.ceil(product?.length / 10) : Math.ceil(searchResult.length / 10)}</span>
                 <div className='flex gap-2 items-center'>
-                    <Image src="left.svg" width={24} height={24} alt="left" onClick={() => prevPage()} className="cursor-pointer" />
+                    <Image src={`${page > 0 ? "chevrons-left-active.svg" : "left.svg"}`} width={24} height={24} alt="left" onClick={() => prevPage()} className="cursor-pointer" />
                     <span>{page + 1}</span>
-                    <Image src="right.svg" width={24} height={24} alt="right" onClick={() => nextPage()} className="cursor-pointer" />
+                    <Image src={`${search === "" ? page < Math.ceil(product?.length / 10) - 1 ? "chevrons-right-active.svg" : "right.svg" : page < Math.ceil(searchResult.length / 10) - 1 ? "chevrons-right-active.svg" : "right.svg"}`} width={24} height={24} alt="right" onClick={() => nextPage()} className="cursor-pointer" />
                 </div>
             </div>
         </div>
